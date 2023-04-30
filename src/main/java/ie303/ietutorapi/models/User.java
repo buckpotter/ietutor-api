@@ -3,6 +3,7 @@ package ie303.ietutorapi.models;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Getter
 @Setter
@@ -13,13 +14,23 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
     @Id
     private String _id;
-    private String client_id;
+
+    @Field("client_id")
+    private String clientId;
+
+    @Field("client_secret")
     private String tenant;
+
+
     private String email;
     private String password;
     private String connection;
     private String username;
+    @Field("role")
     private int role;
-    private int hours_rate;
+    @Field("hourly_wage")
+    private int hourlyWage;
     private String bio;
+    private String phone;
+    private String address;
 }

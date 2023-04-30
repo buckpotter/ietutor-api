@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.Date;
 
 @Setter
 @Getter
@@ -15,19 +18,37 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Booking {
     @Id
     private String _id;
-    private String instructor_id;
-    private String student_id;
-    private String subject_id;
-    private String start_time;
-    private String end_time;
-    private String booking_status;
-    private String date; // date of the booking
+
+    @Field("instructor_id")
+    private String instructorId;
+
+    @Field("student_id")
+    private String studentDd;
+
+    @Field("subject_id")
+    private String subjectId;
+
+    @Field("startTime")
+    private String startTime;
+
+    @Field("endTime")
+    private String endTime;
+
+    @Field("booking_status")
+    private String bookingStatus;
+
+    @Field("Created_at")
+    private Date createdAt; // date of the booking
     private Recurrence recurrence;
 
     public static class Recurrence {
+
+        @Field("frequency")
         private String frequency;
+        @Field("interval")
         private int interval;
-        private String end_date;
+        @Field("end_date")
+        private String endDate;
 
         // ...
     }
