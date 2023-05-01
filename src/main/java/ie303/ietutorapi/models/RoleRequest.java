@@ -26,7 +26,7 @@ public class RoleRequest {
         }
      */
     @Id
-    private String _id;
+    private String id;
 
     @Field("user_id")
     private String userId;

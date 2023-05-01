@@ -1,7 +1,9 @@
 package ie303.ietutorapi.controllers;
 
 import ie303.ietutorapi.models.InstructorSubjectRequest;
+import ie303.ietutorapi.models.Notification;
 import ie303.ietutorapi.repositories.InstructorSubjectRequestRepository;
+import ie303.ietutorapi.repositories.NotificationRepository;
 import ie303.ietutorapi.repositories.SubjectRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class InstructorSubjectRequestController {
 
     @Autowired
     SubjectRepository subjectRepo;
+
+    @Autowired
+    NotificationRepository notificationRepo;
 
     // Instructor có thể tạo request để đăng ký dạy học cho một môn học bất kỳ
     @PostMapping("/instructor-subject-requests")
@@ -54,6 +59,14 @@ public class InstructorSubjectRequestController {
         }
         subject.get().getInstructorIds().add(instructorSubjectRequest.get().getInstructorId());
         subjectRepo.save(subject.get());
+
+        // Tạo notification cho instructor
+        Notification notification = new Notification();
+        notification.setUserId(instructorSubjectRequest.get().getInstructorId());
+        notification.setMessage("Your request to teach " + subject.get().getName() + " has been approved");
+        notification.setCreatedAt(new java.util.Date());
+        notification.setRead(false);
+        notificationRepo.save(notification);
 
         // return the role request object with status code 200
         return ResponseEntity.ok(instructorSubjectRequest.get());

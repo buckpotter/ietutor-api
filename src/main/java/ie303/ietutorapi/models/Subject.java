@@ -15,10 +15,11 @@ import java.util.List;
 @Document(collection = "subjects")
 public class Subject {
     @Id
-    private String _id;
+    private String id;
     private String name;
     private String description;
 
     @Field("instructor_ids")
     private List<String> instructorIds;
+    
 }

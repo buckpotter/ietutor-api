@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 
@@ -27,16 +28,17 @@ public class Review {
     }
     * */
     @Id
-    private String _id;
+    private String id;
 
 
-    private String instructor_id;
-    private String student_id;
+    @Field("instructor_id")
+    private String instructorId;
+
+    @Field("student_id")
+    private String studentId;
     private int rating;
     private String comment;
-    private Date created_at;
 
-    public void setCreated_at(Date date) {
-        this.created_at = date;
-    }
+    @Field("created_at")
+    private Date createdAt;
 }

@@ -29,7 +29,7 @@ public class InstructorSubjectRequest {
      */
 
     @Id
-    private String _id;
+    private String id;
 
     @Field("instructor_id")
     private String instructorId;

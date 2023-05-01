@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document(collection = "users")
 public class User {
     @Id
-    private String _id;
+    private String id;
 
     @Field("client_id")
     private String clientId;
@@ -33,4 +33,5 @@ public class User {
     private String bio;
     private String phone;
     private String address;
+    private String picture;
 }

@@ -17,7 +17,7 @@ import java.util.Date;
 @Document(collection = "bookings")
 public class Booking {
     @Id
-    private String _id;
+    private String id;
 
     @Field("instructor_id")
     private String instructorId;

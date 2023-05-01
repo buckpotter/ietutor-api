@@ -1,6 +1,8 @@
 package ie303.ietutorapi.controllers;
 
+import ie303.ietutorapi.models.Notification;
 import ie303.ietutorapi.models.RoleRequest;
+import ie303.ietutorapi.repositories.NotificationRepository;
 import ie303.ietutorapi.repositories.RoleRequestRepository;
 import ie303.ietutorapi.repositories.UserRepository;
 import lombok.Getter;
@@ -16,8 +18,9 @@ import java.util.List;
 @RestController
 public class RoleRequestController {
     @Autowired
+    NotificationRepository notificationRepo;
+    @Autowired
     private RoleRequestRepository roleRequestRepo;
-
     @Autowired
     private UserRepository userRepo;
 
@@ -80,6 +83,14 @@ public class RoleRequestController {
 
         // Delete the role request from the database
         roleRequestRepo.deleteById(String.valueOf(id));
+
+        // Send notification to the user
+        Notification notification = new Notification();
+        notification.setUserId(roleRequest.getUserId());
+        notification.setMessage("Your request to become an instructor has been approved");
+        notification.setCreatedAt(new java.util.Date());
+        notification.setRead(false);
+        notificationRepo.save(notification);
 
         return ResponseEntity.ok("Role request approved");
     }
