@@ -23,7 +23,7 @@ public class Booking {
     private String instructorId;
 
     @Field("student_id")
-    private String studentDd;
+    private String studentId;
 
     @Field("subject_id")
     private String subjectId;
@@ -41,14 +41,23 @@ public class Booking {
     private Date createdAt; // date of the booking
     private Recurrence recurrence;
 
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Recurrence {
 
         @Field("frequency")
         private String frequency;
         @Field("interval")
         private int interval;
+
+        @Field("start_date")
+        private Date startDate;
+
         @Field("end_date")
-        private String endDate;
+        private Date endDate;
 
         // ...
     }

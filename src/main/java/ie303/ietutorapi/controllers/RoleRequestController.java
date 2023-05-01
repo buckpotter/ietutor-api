@@ -95,6 +95,31 @@ public class RoleRequestController {
         return ResponseEntity.ok("Role request approved");
     }
 
+    // When the admin rejects the request. The request is deleted from the database and the user is notified
+    @DeleteMapping("/role-requests/{id}")
+    public ResponseEntity<?> rejectRoleRequest(@PathVariable("id") ObjectId id) {
+        // Find the role request with the given id
+        RoleRequest roleRequest = roleRequestRepo.findById(String.valueOf(id)).orElse(null);
+
+        if (roleRequest == null) {
+            return ResponseEntity.badRequest().body("Role request not found");
+        }
+
+        // Delete the role request from the database
+        roleRequestRepo.deleteById(String.valueOf(id));
+
+        // Send notification to the user
+        Notification notification = new Notification();
+        notification.setUserId(roleRequest.getUserId());
+        notification.setMessage("Your request to become an instructor has been rejected");
+        notification.setCreatedAt(new java.util.Date());
+        notification.setRead(false);
+        notificationRepo.save(notification);
+
+        return ResponseEntity.ok("Role request rejected");
+    }
+
+
     // This class is used to parse the JSON object sent from the client
     @Getter
     public static class Json {

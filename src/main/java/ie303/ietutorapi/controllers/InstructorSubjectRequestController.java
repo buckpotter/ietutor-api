@@ -72,6 +72,30 @@ public class InstructorSubjectRequestController {
         return ResponseEntity.ok(instructorSubjectRequest.get());
     }
 
+    // Khi admin duyệt request, nếu request không được duyệt thì instructor sẽ không được thêm vào danh sách instructor của môn học đó
+    @DeleteMapping("/instructor-subject-requests/{id}")
+    public ResponseEntity<?> deleteInstructorSubjectRequest(@PathVariable("id") String id) {
+        var instructorSubjectRequest = instructorSubjectRequestRepo.findById(id);
+
+        if (instructorSubjectRequest.isEmpty()) {
+            return ResponseEntity.badRequest().body("No instructor subject request found");
+        }
+
+        // Xóa request
+        instructorSubjectRequestRepo.deleteById(id);
+
+        // Tạo notification cho instructor
+        Notification notification = new Notification();
+        notification.setUserId(instructorSubjectRequest.get().getInstructorId());
+        notification.setMessage("Your request to teach " + subjectRepo.findById(instructorSubjectRequest.get().getSubjectId()).get().getName() + " has been rejected");
+        notification.setCreatedAt(new java.util.Date());
+        notification.setRead(false);
+        notificationRepo.save(notification);
+
+        // return the role request object with status code 200
+        return ResponseEntity.ok(instructorSubjectRequest.get());
+    }
+
     @Getter
     public static class JsonBody {
 
