@@ -17,6 +17,11 @@ public class UserController {
     @Autowired
 
     private UserRepository userRepo;
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        List<User> user = userRepo.findAll();
+        return user;
+    }
 
     // Get all instructors
     @GetMapping("/instructors")
