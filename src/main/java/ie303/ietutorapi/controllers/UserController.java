@@ -1,12 +1,16 @@
 package ie303.ietutorapi.controllers;
 
 import ie303.ietutorapi.models.User;
+import ie303.ietutorapi.repositories.ReviewRepository;
 import ie303.ietutorapi.repositories.UserRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +19,10 @@ import java.util.Optional;
 @RestController
 public class UserController {
     @Autowired
-
     private UserRepository userRepo;
+    @Autowired
+    private ReviewRepository reviewRepo;
+
     @GetMapping("/users")
     public List<User> getUsers() {
         List<User> user = userRepo.findAll();
@@ -25,9 +31,30 @@ public class UserController {
 
     // Get all instructors
     @GetMapping("/instructors")
-    public List<User> getInstructors() {
+    public ResponseEntity<?> getInstructors() {
         // Get all user that have the role of 1 (instructor) from MongoDB databas
-        return null;
+        List<User> instructors = userRepo.findAllByRole(1);
+
+        List<InsJSON> res = new ArrayList<>();
+
+        for (var ins : instructors) {
+            InsJSON insJSON = new InsJSON();
+
+            insJSON.setId(ins.getId());
+            insJSON.setRating(calcAvgRating(ins.getId()));
+            insJSON.setEmail(ins.getEmail());
+            insJSON.setAddress(ins.getAddress());
+            insJSON.setBio(ins.getBio());
+            insJSON.setUsername(ins.getUsername());
+            insJSON.setPhone(ins.getPhone());
+            insJSON.setPicture(ins.getPicture());
+            insJSON.setRole(ins.getRole());
+            insJSON.setHourlyWage(ins.getHourlyWage());
+
+            res.add(insJSON);
+        }
+
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/user/{email}")
@@ -58,5 +85,30 @@ public class UserController {
         userRepo.save(user);
 
         return ResponseEntity.ok(user);
+    }
+
+
+    public double calcAvgRating(String insId) {
+        double avg = 0;
+        var reviews = reviewRepo.findByInstructorId(insId);
+
+        if (reviews.isEmpty())
+            return avg;
+
+        for (var review : reviews)
+            avg += review.getRating();
+
+        avg /= reviews.size();
+
+        // 2 decimal places
+        avg = Math.round(avg * 100.0) / 100.0;
+
+        return avg;
+    }
+
+    @Getter
+    @Setter
+    static class InsJSON extends User {
+        double rating;
     }
 }
