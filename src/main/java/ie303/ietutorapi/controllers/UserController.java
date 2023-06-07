@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -123,6 +121,22 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    //Count number of user
+    @GetMapping("/users/stats")
+    public ResponseEntity<Map<String, Long>> getUserStats() {
+        long totalUsers = userRepo.count();
+        long usersWithRole0 = userRepo.countByRole(0);
+        long usersWithRole1 = userRepo.countByRole(1);
+
+        Map<String, Long> stats = new HashMap<>();
+        stats.put("totalUsers", totalUsers);
+        stats.put("usersWithRole0", usersWithRole0);
+        stats.put("usersWithRole1", usersWithRole1);
+
+        return ResponseEntity.ok(stats);
+    }
+
 
     @Getter
     @Setter

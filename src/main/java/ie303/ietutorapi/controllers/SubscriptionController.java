@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,6 +77,24 @@ public class SubscriptionController {
         subscriptionRepo.save(subscription);
 
         return ResponseEntity.ok("Successfully saved Subscription");
+    }
+
+    @GetMapping("/revenue-month")
+    public ResponseEntity<Double> getTotalRevenueForCurrentMonth() {
+        // Get the current month and year
+        YearMonth currentMonth = YearMonth.now();
+        LocalDate startDate = currentMonth.atDay(1);
+        LocalDate endDate = currentMonth.atEndOfMonth();
+
+        // Get all subscriptions within the current month
+        List<Subscription> subscriptions = subscriptionRepo.findByStartDateBetween(startDate, endDate);
+
+        // Calculate the total revenue
+        double totalRevenue = subscriptions.stream()
+                .mapToDouble(Subscription::getTotal)
+                .sum();
+
+        return ResponseEntity.ok(totalRevenue);
     }
 
     @Getter
