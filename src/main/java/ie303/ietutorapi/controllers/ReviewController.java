@@ -75,6 +75,7 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
+    // get average rating of an instructor
     public double calcAvgRating(String insId) {
         double avg = 0;
         var reviews = reviewRepo.findByInstructorId(insId);

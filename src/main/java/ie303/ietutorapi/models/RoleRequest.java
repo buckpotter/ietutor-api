@@ -15,16 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Document(collection = "role_requests")
 public class RoleRequest {
-    /*
-        RoleRequests Collection:
-        {
-            _id: ObjectId,
-            user_id: ObjectId, // reference to the user who submitted the request
-            is_approved: Boolean, // whether the request has been approved
-            hourly_wage: Number, // the hourly wage the user is requesting
-            created_at: Date // the date on which the request was submitted
-        }
-     */
+
     @Id
     private String id;
 
@@ -39,5 +30,17 @@ public class RoleRequest {
 
     @Field("created_at")
     private Date createdAt;
+
+      /*
+        RoleRequests Collection:
+        {
+            _id: ObjectId,
+            user_id: ObjectId, // reference to the user who submitted the request
+            is_approved: Boolean, // whether the request has been approved
+            hourly_wage: Number, // the hourly wage the user is requesting
+            created_at: Date // the date on which the request was submitted
+        }
+     */
+
 }
 

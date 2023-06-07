@@ -31,4 +31,18 @@ public class NotificationController {
         notificationRepo.save(notification);
         return ResponseEntity.ok(notification);
     }
+
+    // lấy số lượng notification chưa đọc
+    @GetMapping("/notifications/unread/{id}")
+    public ResponseEntity<?> getUnreadNotification(@PathVariable("id") String id) {
+        // Get all notifications from MongoDB database
+        var notifications = notificationRepo.findByUserId(id);
+        int count = 0;
+        for (var notification : notifications) {
+            if (!notification.isRead()) {
+                count++;
+            }
+        }
+        return ResponseEntity.ok(count);
+    }
 }
