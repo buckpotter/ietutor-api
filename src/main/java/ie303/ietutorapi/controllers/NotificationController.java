@@ -13,7 +13,7 @@ public class NotificationController {
     @Autowired
     NotificationRepository notificationRepo;
 
-    // Lấy tất cả thông báo của user theo email
+    // get all notifications of user by email
     @GetMapping("/notifications/{id}")
     public ResponseEntity<?> getAllNotifications(@PathVariable("id") String id) {
         // Get all notifications from MongoDB database
@@ -22,7 +22,7 @@ public class NotificationController {
     }
 
 
-    // Đánh dấu đã đọc notification
+    // mark notification as read
     @PutMapping("/notifications/{id}")
     public ResponseEntity<?> readNotification(@PathVariable("id") String id) {
         // Get all notifications from MongoDB database
@@ -32,7 +32,7 @@ public class NotificationController {
         return ResponseEntity.ok(notification);
     }
 
-    // lấy số lượng notification chưa đọc
+    // get unread notification count
     @GetMapping("/notifications/unread/{id}")
     public ResponseEntity<?> getUnreadNotification(@PathVariable("id") String id) {
         // Get all notifications from MongoDB database

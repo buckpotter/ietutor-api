@@ -105,4 +105,19 @@ public class ReviewController {
         String studentName;
         String picture;
     }
+
+   /* @Getter
+    @Setter
+    static class InsJSON {
+        String id;
+        double rating;
+        String email;
+        String address;
+        String bio;
+        String username;
+        String phone;
+        String picture;
+        int role;
+        double hourlyWage;
+    } */
 }

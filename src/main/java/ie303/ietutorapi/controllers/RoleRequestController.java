@@ -47,7 +47,7 @@ public class RoleRequestController {
         return new ResponseEntity<>(roleRequests, HttpStatus.OK);
     }
 
-    // Gửi request để trở thành instructor
+    // send request to become an instructor
     @PostMapping("/users/add-instructor-request")
     // requestBody is the JSON object sent from the client
     public ResponseEntity<?> becomeInstructor(@RequestBody Json requestBody) {

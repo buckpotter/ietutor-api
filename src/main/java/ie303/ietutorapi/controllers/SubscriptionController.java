@@ -74,7 +74,7 @@ public class SubscriptionController {
 
         subscriptionRepo.save(subscription);
 
-        return ResponseEntity.ok("successfully saved subscription");
+        return ResponseEntity.ok("Successfully saved Subscription");
     }
 
     @Getter

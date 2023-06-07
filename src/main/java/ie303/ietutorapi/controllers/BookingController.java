@@ -16,11 +16,14 @@ public class BookingController {
     private BookingRepository bookingRepo;
 
     // Hàm kiểm tra số ngày cách nhau giữa 2 java.util.Date
+    //check number of days between 2 dates
     public static long daysBetween(Date one, Date two) {
         long difference = (one.getTime() - two.getTime()) / 86400000;
         return Math.abs(difference);
     }
 
+
+    // Get all bookings
     @GetMapping("/bookings")
     public ResponseEntity<?> getAllBookings() {
         // Get all bookings from MongoDB database
@@ -30,7 +33,7 @@ public class BookingController {
             // return json object with error message
             return ResponseEntity.badRequest().body("No bookings found");
         }
-
+         //return json object with bookings
         return ResponseEntity.ok(bookings);
     }
 
@@ -74,7 +77,7 @@ public class BookingController {
     }
     * */
 
-    // Thêm booking mới
+    // add new booking
 
     // Get all bookings for a specific user
     @GetMapping("/bookings/{id}")

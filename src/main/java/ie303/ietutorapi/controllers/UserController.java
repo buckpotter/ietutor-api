@@ -32,7 +32,7 @@ public class UserController {
     // Get all instructors
     @GetMapping("/instructors")
     public ResponseEntity<?> getInstructors() {
-        // Get all user that have the role of 1 (instructor) from MongoDB databas
+        // Get all user that have the role of 1 (instructor) from MongoDB database
         List<User> instructors = userRepo.findAllByRole(1);
 
         List<InsJSON> res = new ArrayList<>();

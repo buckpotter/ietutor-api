@@ -47,10 +47,12 @@ public class PlanController {
             plan.setPrice(updatedPlan.getPrice());
             plan.setDuration(updatedPlan.getDuration());
             plan.setBgColor(updatedPlan.getBgColor());
-            // Lưu kế hoạch đã cập nhật vào cơ sở dữ liệu
+
+            // save updated plan to database
             Plan updatedPlanID = planRepo.save(plan);
             return ResponseEntity.ok(updatedPlanID);
         } else {
+            // return 404 not found if plan is not found
             return ResponseEntity.notFound().build();
         }
     }
@@ -61,7 +63,7 @@ public class PlanController {
         Optional<Plan> plan = planRepo.findById(id);
         if (plan.isPresent()) {
             planRepo.deleteById(id);
-            return ResponseEntity.ok("Plan deleted successfully");
+            return ResponseEntity.ok("Plan has been deleted successfully");
         } else {
             return ResponseEntity.notFound().build();
         }
