@@ -21,7 +21,7 @@ public class User {
     @Field("client_secret")
     private String tenant;
 
-
+    @Field("email")
     private String email;
     private String password;
     private String connection;

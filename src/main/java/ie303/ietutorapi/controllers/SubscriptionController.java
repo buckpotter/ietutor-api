@@ -1,16 +1,20 @@
 package ie303.ietutorapi.controllers;
 
+import ie303.ietutorapi.models.Plan;
 import ie303.ietutorapi.models.Subscription;
+import ie303.ietutorapi.models.User;
 import ie303.ietutorapi.repositories.SubscriptionRepository;
 import ie303.ietutorapi.repositories.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -21,6 +25,24 @@ public class SubscriptionController {
 
     @Autowired
     private UserRepository userRepo;
+
+    // get all plans
+    @GetMapping("/subscriptions")
+    public List<Subscription> getAllSubscriptionsWithEmail() {
+        List<Subscription> subscriptions = subscriptionRepo.findAll();
+
+        for (Subscription subscription : subscriptions) {
+            String userId = subscription.getUserId();
+            Optional<User> user = userRepo.findById(userId);
+            if (user.isPresent()) {
+                String email = user.get().getEmail();
+                subscription.setEmail(email);
+            }
+        }
+
+        return subscriptions;
+    }
+
 
     // save a subscription
     @PostMapping("/subscriptions")

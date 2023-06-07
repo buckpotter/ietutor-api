@@ -22,6 +22,9 @@ public class Subscription {
     @Field("user_id")
     private String userId;
 
+    @Field("email")
+    private String email;
+
     @Field("plan_id")
     private String planId;
 
@@ -42,5 +45,4 @@ public class Subscription {
 
     @Field("end_date")
     private Date endDate;
-
 }
