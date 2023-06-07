@@ -59,4 +59,23 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+
+    //Add new user
+    @PostMapping("/adduser")
+    public User addUser(@RequestBody User user) {
+        return userRepo.save(user);
+    }
+
+    //Delete user by ID
+    @DeleteMapping("/deleteuser/{id}")
+    public ResponseEntity<String> deleteUserById(@PathVariable String id) {
+        Optional<User> user = userRepo.findById(id);
+        if (user.isPresent()) {
+            userRepo.deleteById(id);
+            return ResponseEntity.ok("User deleted successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
