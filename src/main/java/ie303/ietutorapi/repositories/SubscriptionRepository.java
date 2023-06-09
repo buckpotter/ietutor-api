@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface SubscriptionRepository extends MongoRepository<Subscription, String> {
     List<Subscription> findByStartDateBetween(LocalDate startDate, LocalDate endDate);
+    List<Subscription> findByCreatedAtBetween(LocalDate startDate, LocalDate endDate);
 }
