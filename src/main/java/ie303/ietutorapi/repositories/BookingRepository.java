@@ -8,6 +8,14 @@ import java.util.List;
 
 @Repository
 public interface BookingRepository extends MongoRepository<Booking, String> {
-    // find bookings by user id
+    // find bookings of an instructor
+
     List<Booking> findByInstructorId(String userId);
+
+    // find bookings that have status of "approved" of a specific user
+    List<Booking> findByInstructorIdAndStatus(String userId, String status);
+
+    // find bookings of a student
+    List<Booking> findByStudentId(String userId);
+
 }

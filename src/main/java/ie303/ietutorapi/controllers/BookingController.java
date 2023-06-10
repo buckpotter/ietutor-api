@@ -1,7 +1,9 @@
 package ie303.ietutorapi.controllers;
 
 import ie303.ietutorapi.models.Booking;
+import ie303.ietutorapi.models.Notification;
 import ie303.ietutorapi.repositories.BookingRepository;
+import ie303.ietutorapi.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,9 @@ import java.util.List;
 public class BookingController {
     @Autowired
     private BookingRepository bookingRepo;
+
+    @Autowired
+    private NotificationRepository notificationRepo;
 
     // Hàm kiểm tra số ngày cách nhau giữa 2 java.util.Date
     //check number of days between 2 dates
@@ -33,10 +38,58 @@ public class BookingController {
             // return json object with error message
             return ResponseEntity.badRequest().body("No bookings found");
         }
-         //return json object with bookings
+        //return json object with bookings
         return ResponseEntity.ok(bookings);
     }
 
+    // Approve a booking
+    @PutMapping("/bookings/{id}")
+    public ResponseEntity<?> approveBooking(@PathVariable String id) {
+        // Get booking by id from MongoDB database
+        Booking booking = bookingRepo.findById(id).orElse(null);
+
+        if (booking == null) {
+            // return json object with error message
+            return ResponseEntity.badRequest().body("No booking found");
+        }
+
+        // Update booking status to "approved"
+        booking.setStatus("approved");
+
+        // Save updated booking to MongoDB database
+        bookingRepo.save(booking);
+
+        // send notification to student
+        notificationRepo.save(new Notification(booking.getStudentId(), String.format("Your booking with id %s has been approved", booking.getId())));
+
+        // return json object with success message
+        return ResponseEntity.ok("Booking approved");
+    }
+
+    // Reject a booking
+    @DeleteMapping("/bookings/{id}")
+    public ResponseEntity<?> rejectBooking(@PathVariable String id) {
+        System.out.println(id);
+        // Get booking by id from MongoDB database
+        Booking booking = bookingRepo.findById(id).orElse(null);
+
+        if (booking == null) {
+            // return json object with error message
+            return ResponseEntity.badRequest().body("No booking found");
+        }
+
+        // Update booking status to "rejected"
+        booking.setStatus("canceled");
+
+        // Save updated booking to MongoDB database
+        bookingRepo.save(booking);
+
+        // send notification to student
+        notificationRepo.save(new Notification(booking.getStudentId(), String.format("Your booking with id %s has been rejected", booking.getId())));
+
+        // return json object with success message
+        return ResponseEntity.ok("Booking rejected");
+    }
 
     /*
     @Id
@@ -85,50 +138,62 @@ public class BookingController {
         // Get all bookings from MongoDB database that belong to the user with the given id
         List<Booking> bookings = bookingRepo.findByInstructorId(id);
 
-
-        if (bookings.isEmpty()) {
-            // return json object with error message
-            return ResponseEntity.badRequest().body("No bookings found");
-        }
-
         return ResponseEntity.ok(bookings);
     }
 
-    public boolean isConflict(Booking b1, Booking b2) {
-        // Nếu cả b1.recurrence.startDate và b1.recurrence.endDate nhỏ hơn b2.recurrence.startDate lẫn b2.recurrence.endDate
-        // Nếu cả b1.recurrence.startDate và b1.recurrence.endDate lớn hơn b2.recurrence.startDate lẫn b2.recurrence.endDate
-        if (b1.getRecurrence().getStartDate().compareTo(b2.getRecurrence().getStartDate()) < 0 &&
-                b1.getRecurrence().getEndDate().compareTo(b2.getRecurrence().getStartDate()) < 0 ||
-                b1.getRecurrence().getStartDate().compareTo(b2.getRecurrence().getEndDate()) > 0 &&
-                        b1.getRecurrence().getEndDate().compareTo(b2.getRecurrence().getEndDate()) > 0)
-            return false;
+    public boolean isConflict(Booking newBooking) {
+        List<Booking> bookings = bookingRepo.findByInstructorId(newBooking.getInstructorId());
+        for (Booking b : bookings) {
+            Date newBookingStart = newBooking.getStartDate();
+            Date newBookingEnd = newBooking.getEndDate();
+            Date bStart = b.getStartDate();
+            Date bEnd = b.getEndDate();
 
-        switch (b1.getRecurrence().getFrequency()) {
-            case "daily" -> {
+            // newBookingStart >= bEnd or newBookingEnd <= bStart, no conflict
+            if (!(newBookingStart.compareTo(bEnd) >= 0 || newBookingEnd.compareTo(bStart) <= 0))
                 return true;
-            }
-            case "weekly" -> {
-                // Nếu số ngày cách nhau giữa 2 recurrence.startDate là bội số của 7
-                if (daysBetween(b1.getRecurrence().getStartDate(), b2.getRecurrence().getStartDate()) % 7 == 0)
-                    return true;
-            }
         }
-
         return false;
     }
 
     @PostMapping("/bookings")
     public ResponseEntity<?> createBooking(@RequestBody Booking booking) {
         // Kiểm tra xem có bị conflict thời gian với các booking đã có của instructor không
-        List<Booking> bookings = bookingRepo.findByInstructorId(booking.getInstructorId());
-        for (var b : bookings)
-            // Nếu booking mới có khoảng recurrence.startDate và recurrence.endDate nằm trong khoảng của booking cũ
-            if (isConflict(booking, b))
-                return ResponseEntity.badRequest().body("Booking time conflict");
+        if (isConflict(booking))
+            return ResponseEntity.badRequest().body("Booking time conflict");
 
-        // Lưu booking mới vào database
+        booking.setCreatedAt(new Date());
         bookingRepo.save(booking);
 
         return ResponseEntity.ok(booking);
     }
+
+    // Get all approved bookings for a specific user
+    @GetMapping("/bookings/approved/{id}")
+    public ResponseEntity<?> getApproveBooking(@PathVariable String id) {
+        // Get all bookings from MongoDB database that belong to the user with the given id
+        List<Booking> bookings = bookingRepo.findByInstructorIdAndStatus(id, "approved");
+        return ResponseEntity.ok(bookings);
+
+
+    }
+
+    // Get all booking of a student
+    @GetMapping("/bookings/student/{id}")
+    public ResponseEntity<?> getBookingsByStudentId(@PathVariable String id) {
+        // Get all bookings from MongoDB database that belong to the user with the given id
+        List<Booking> bookings = bookingRepo.findByStudentId(id);
+
+        return ResponseEntity.ok(bookings);
+    }
+
+    // Get all booking of an instructor
+    @GetMapping("/bookings/instructor/{id}")
+    public ResponseEntity<?> getBookingsByInstructorId(@PathVariable String id) {
+        // Get all bookings from MongoDB database that belong to the user with the given id
+        List<Booking> bookings = bookingRepo.findByInstructorId(id);
+
+        return ResponseEntity.ok(bookings);
+    }
+
 }

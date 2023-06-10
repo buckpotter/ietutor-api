@@ -39,4 +39,11 @@ public class Notification {
 
     @Field("created_at")
     private Date createdAt;
+
+    public Notification(String studentId, String message) {
+        this.userId = studentId;
+        this.message = message;
+        this.isRead = false;
+        this.createdAt = new Date();
+    }
 }

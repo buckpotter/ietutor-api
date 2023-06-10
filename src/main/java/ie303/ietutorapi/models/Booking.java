@@ -25,40 +25,36 @@ public class Booking {
     @Field("student_id")
     private String studentId;
 
-    @Field("subject_id")
-    private String subjectId;
+    @Field("start_date")
+    private Date startDate;
 
-    @Field("startTime")
-    private String startTime;
+    @Field("end_date")
+    private Date endDate;
 
-    @Field("endTime")
-    private String endTime;
+    private String status;
 
-    @Field("booking_status")
-    private String bookingStatus;
+    private String title;
+    private String notes;
 
     @Field("Created_at")
     private Date createdAt; // date of the booking
-    private Recurrence recurrence;
-
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Recurrence {
-
-        @Field("frequency")
-        private String frequency;
-        @Field("interval")
-        private int interval;
-
-        @Field("start_date")
-        private Date startDate;
-
-        @Field("end_date")
-        private Date endDate;
-
-        // ...
-    }
+//    @Getter
+//    @Setter
+//    @AllArgsConstructor
+//    @NoArgsConstructor
+//    public static class Recurrence {
+//
+//        @Field("frequency")
+//        private String frequency;
+//        @Field("interval")
+//        private int interval;
+//
+//        @Field("start_date")
+//        private Date startDate;
+//
+//        @Field("end_date")
+//        private Date endDate;
+//
+//        // ...
+//    }
 }

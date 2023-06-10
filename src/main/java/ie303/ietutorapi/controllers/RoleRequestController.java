@@ -13,14 +13,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 // import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class RoleRequestController {
     @Autowired
-    NotificationRepository notificationRepo;
+    private NotificationRepository notificationRepo;
+
     @Autowired
     private RoleRequestRepository roleRequestRepo;
+
     @Autowired
     private UserRepository userRepo;
 
@@ -35,7 +38,8 @@ public class RoleRequestController {
 
         return new ResponseEntity<>(roleRequests, HttpStatus.OK);
     }
-// Get all role requests by user id and return them as a JSON object
+
+    // Get all role requests by user id and return them as a JSON object
     @GetMapping("/role-requests/{userId}")
     public ResponseEntity<List<RoleRequest>> getRoleRequestsByUserId(@PathVariable("userId") ObjectId userId) {
         List<RoleRequest> roleRequests = roleRequestRepo.findAll();
