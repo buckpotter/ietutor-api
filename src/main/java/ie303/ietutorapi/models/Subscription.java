@@ -36,6 +36,7 @@ public class Subscription {
     private String status;
 
     private Double total;
+    private String type;
 
     @Field("created_at")
     private Date createdAt;

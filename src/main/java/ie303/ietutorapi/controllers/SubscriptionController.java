@@ -1,6 +1,5 @@
 package ie303.ietutorapi.controllers;
 
-import ie303.ietutorapi.models.Plan;
 import ie303.ietutorapi.models.Subscription;
 import ie303.ietutorapi.models.User;
 import ie303.ietutorapi.repositories.SubscriptionRepository;
@@ -10,7 +9,6 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -61,6 +59,7 @@ public class SubscriptionController {
         subscription.setDuration(requestBody.duration);
         subscription.setPaymentMethodId(requestBody.paymentMethodId);
         subscription.setTotal(requestBody.total);
+        subscription.setType(requestBody.type);
         subscription.setStatus("success");
 
         // created_at is set automatically by MongoDB
@@ -96,24 +95,6 @@ public class SubscriptionController {
         return ResponseEntity.ok(totalRevenue);
     }
 
-    @Getter
-    @Setter
-    public static class Json {
-        public String userId;
-        public String planId;
-        public Integer duration;
-        public String paymentMethodId;
-        public Double total;
-    }
-
-    //Chart revenue every month
-    @Getter
-    @Setter
-    public class RevenueData {
-        private String month;
-        private int year;
-        private double totalRevenue;
-    }
     @GetMapping("/revenue/{month}/{year}")
     public List<RevenueData> getRevenueByMonthAndYear(@PathVariable int month, @PathVariable int year) {
         List<RevenueData> revenueList = new ArrayList<>();
@@ -166,17 +147,6 @@ public class SubscriptionController {
         return revenueList;
     }
 
-    // Chart plan
-    @Getter
-    @Setter
-    public class PlanCount {
-        private String planId;
-        private long count;
-        public PlanCount(String planId, Long count) {
-            this.planId = planId;
-            this.count = count;
-        }
-    }
     @GetMapping("/subscriptions/count-by-plan")
     public ResponseEntity<List<PlanCount>> getCountByPlan(
             @RequestParam int startMonth, @RequestParam int startYear,
@@ -202,6 +172,39 @@ public class SubscriptionController {
         }
 
         return ResponseEntity.ok(result);
+    }
+
+    @Getter
+    @Setter
+    public static class Json {
+        public String userId;
+        public String planId;
+        public Integer duration;
+        public String paymentMethodId;
+        public Double total;
+        public String type;
+    }
+
+    //Chart revenue every month
+    @Getter
+    @Setter
+    public class RevenueData {
+        private String month;
+        private int year;
+        private double totalRevenue;
+    }
+
+    // Chart plan
+    @Getter
+    @Setter
+    public class PlanCount {
+        private String planId;
+        private long count;
+
+        public PlanCount(String planId, Long count) {
+            this.planId = planId;
+            this.count = count;
+        }
     }
 
 }
