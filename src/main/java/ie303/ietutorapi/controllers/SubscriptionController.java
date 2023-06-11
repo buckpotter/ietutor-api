@@ -160,15 +160,15 @@ public class SubscriptionController {
         Map<String, Long> countByPlan = new HashMap<>();
 
         for (Subscription subscription : subscriptions) {
-            String planId = subscription.getPlanId();
-            countByPlan.put(planId, countByPlan.getOrDefault(planId, 0L) + 1);
+            String type = subscription.getType();
+            countByPlan.put(type, countByPlan.getOrDefault(type, 0L) + 1);
         }
 
         List<PlanCount> result = new ArrayList<>();
         for (Map.Entry<String, Long> entry : countByPlan.entrySet()) {
-            String planId = entry.getKey();
+            String type = entry.getKey();
             Long count = entry.getValue();
-            result.add(new PlanCount(planId, count));
+            result.add(new PlanCount(type, count));
         }
 
         return ResponseEntity.ok(result);
@@ -198,11 +198,11 @@ public class SubscriptionController {
     @Getter
     @Setter
     public class PlanCount {
-        private String planId;
+        private String type;
         private long count;
 
-        public PlanCount(String planId, Long count) {
-            this.planId = planId;
+        public PlanCount(String type, Long count) {
+            this.type = type;
             this.count = count;
         }
     }
