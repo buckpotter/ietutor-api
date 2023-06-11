@@ -110,9 +110,9 @@ public class SubscriptionController {
             int targetMonth = month;
 
             // Nếu năm hiện tại và tháng hiện tại đã trước tháng, năm đã nhập, giảm năm đi 1
-            if (currentMonth < targetMonth || currentYear < targetYear) {
+            /*if (currentMonth < targetMonth || currentYear < targetYear) {
                 targetYear--;
-            }
+            }*/
 
             // Tạo LocalDate từ tháng và năm đã xác định
             YearMonth targetYearMonth = YearMonth.of(targetYear, targetMonth);
