@@ -18,4 +18,7 @@ public interface BookingRepository extends MongoRepository<Booking, String> {
     // find bookings of a student
     List<Booking> findByStudentId(String userId);
 
+    // find bookings that have status of "approved" of a student
+    List<Booking> findByStudentIdAndStatus(String userId, String status);
+
 }
