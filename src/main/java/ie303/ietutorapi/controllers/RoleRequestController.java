@@ -123,6 +123,29 @@ public class RoleRequestController {
         return ResponseEntity.ok("Role request rejected");
     }
 
+    //After 24 hours, if the admin has not approved or rejected the request, the request is automatically deleted from the database
+    @DeleteMapping("/role-requests/auto-delete/{id}")
+    public ResponseEntity<?> autoDeleteRoleRequest(@PathVariable("id") ObjectId id) {
+        // Find the role request with the given id
+        RoleRequest roleRequest = roleRequestRepo.findById(String.valueOf(id)).orElse(null);
+
+        if (roleRequest == null) {
+            return ResponseEntity.badRequest().body("Role request not found");
+        }
+
+        // Delete the role request from the database
+        roleRequestRepo.deleteById(String.valueOf(id));
+
+        // Send notification to the user
+        Notification notification = new Notification();
+        notification.setUserId(roleRequest.getUserId());
+        notification.setMessage("Your request to become an instructor has been automatically deleted");
+        notification.setCreatedAt(new java.util.Date());
+        notification.setRead(false);
+        notificationRepo.save(notification);
+
+        return ResponseEntity.ok("Role request automatically deleted");
+    }
 
     // This class is used to parse the JSON object sent from the client
     @Getter

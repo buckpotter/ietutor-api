@@ -47,6 +47,32 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
+// Booking must be waiting for approval, and if after 24 hours, the booking is still waiting for approval, it will be automatically rejected
+    @GetMapping("/bookings/check")
+    public ResponseEntity<?> checkBooking() {
+        // Get all bookings from MongoDB database
+        List<Booking> bookings = bookingRepo.findAll();
+
+        if (bookings.isEmpty()) {
+            // return json object with error message
+            return ResponseEntity.badRequest().body("No bookings found");
+        }
+        //return json object with bookings
+        for (Booking booking : bookings) {
+            if (booking.getStatus().equals("waiting for approval")) {
+                Date date = new Date();
+                long days = daysBetween(date, booking.getCreatedAt());
+                if (days >= 1) {
+                    booking.setStatus("canceled");
+                    bookingRepo.save(booking);
+                    notificationRepo.save(new Notification(booking.getStudentId(), String.format("Your booking with id %s has been rejected due to timeout", booking.getId())));
+                }
+            }
+        }
+        return ResponseEntity.ok("Check booking success");
+    }
+
+
     // Approve a booking
     @PutMapping("/bookings/{id}")
     public ResponseEntity<?> approveBooking(@PathVariable String id) {
@@ -58,6 +84,7 @@ public class BookingController {
             return ResponseEntity.badRequest().body("No booking found");
         }
 
+
         // Update booking status to "approved"
         booking.setStatus("approved");
 
@@ -66,6 +93,8 @@ public class BookingController {
 
         // send notification to student
         notificationRepo.save(new Notification(booking.getStudentId(), String.format("Your booking with id %s has been approved", booking.getId())));
+
+
 
         // return json object with success message
         return ResponseEntity.ok("Booking approved");
@@ -95,6 +124,16 @@ public class BookingController {
         // return json object with success message
         return ResponseEntity.ok("Booking rejected");
     }
+
+
+
+
+
+
+
+
+
+
 
     /*
     @Id
@@ -222,5 +261,7 @@ public class BookingController {
 
         return ResponseEntity.ok(bookings);
     }
+
+
 
 }
